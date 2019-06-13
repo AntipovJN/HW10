@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class OwnHashMap<K, V> {
 
     private static final int INITIAL_CAPACITY = 16;
@@ -44,6 +46,44 @@ public class OwnHashMap<K, V> {
             }
         }
         return null;
+    }
+
+    public Set<K> getKeySet() {
+        HashSet<K> keys = new HashSet<>();
+        for (int i = 0; i < baskets.length - 1; i++) {
+            if (baskets[i] != null) {
+                keys.add(baskets[i].getKey());
+                Node<K, V> node = baskets[i];
+                while (baskets[i].getNext() != null) {
+                    node = node.getNext();
+                    keys.add(node.getKey());
+                }
+            }
+        }
+        return keys;
+    }
+
+    public List<V> values() {
+        List<V> values = new ArrayList<>(size);
+        for (int i = 0; i < baskets.length - 1; i++) {
+            if (baskets[i] != null) {
+                values.add(baskets[i].getValue());
+                Node<K, V> node = baskets[i];
+                while (baskets[i].getNext() != null) {
+                    node = node.getNext();
+                    values.add(node.getValue());
+                }
+            }
+        }
+        return  values;
+    }
+
+    public void putAll(OwnHashMap<K, V> map) {
+        for (K key : map.getKeySet()) {
+            if (key != null) {
+                put(key, map.get(key));
+            }
+        }
     }
 
     public boolean containsKey(K key) {
