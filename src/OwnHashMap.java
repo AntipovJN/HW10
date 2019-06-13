@@ -18,6 +18,103 @@ public class OwnHashMap<K, V> {
         putNode(key, value, baskets);
     }
 
+    public V get(K key) {
+        try {
+            return getNode(key).getValue();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    public V remove(K key) {
+        int i = (baskets.length - 1) & hash(key);
+        Node<K, V> node = baskets[i];
+        if (node.getKey().equals(key)) {
+            baskets[i] = null;
+            return node.getValue();
+        } else {
+            Node<K, V> previosNode = node;
+            while (node.getNext() != null) {
+                node = node.getNext();
+                if (node.getKey().equals(key)) {
+                    previosNode.setNext(node.getNext());
+                    node.setNext(null);
+                    return node.value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean containsKey(K key) {
+        try {
+            return getNode(key) == null;
+        } catch (NullPointerException e) {
+            return true;
+        }
+    }
+
+    public boolean containsValue(K key) {
+        try {
+            return getNode(key).getValue() == null;
+        } catch (NullPointerException e) {
+            return true;
+        }
+    }
+
+    public void clear() {
+        baskets = null;
+        size = 0;
+        loaded = 0;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    private int hash(K key) {
+        return (key == null) ? 0 : (key.hashCode() ^ (key.hashCode() >>> 16));
+    }
+
+    private Node<K, V> getNode(K key) {
+        Node<K, V> node = baskets[(baskets.length - 1) & hash(key)];
+        if (node.getKey().equals(key)) {
+            return node;
+        } else {
+            while (node.getNext() != null) {
+                node = node.getNext();
+                if (node.getKey().equals(key)) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void resize() {
+        loaded = 0;
+        size = 0;
+        Node<K, V>[] resizeBaskets = new Node[baskets.length * 2];
+        for (int n = 0; n < baskets.length; n++) {
+            if (baskets[n] != null) {
+                Node<K, V> node = baskets[n];
+                if (node.getNext() == null) {
+                    putNode(node.getKey(), node.getValue(), resizeBaskets);
+                } else {
+                    while (node.getNext() != null) {
+                        putNode(node.getKey(), node.getValue(), resizeBaskets);
+                        node = node.getNext();
+                    }
+                }
+            }
+        }
+        baskets = resizeBaskets;
+    }
+
     private void putNode(K key, V value, Node<K, V>[] basket) {
         int i = (basket.length - 1) & hash(key);
         Node<K, V> node = new Node<>(key, value, hash(key), null);
@@ -41,50 +138,6 @@ public class OwnHashMap<K, V> {
         }
         size++;
     }
-
-    private void resize() {
-        loaded = 0;
-        size = 0;
-        Node<K, V>[] resizeBaskets = new Node[baskets.length * 2];
-        for (int n = 0; n < baskets.length; n++) {
-            if (baskets[n] != null) {
-                Node<K, V> node = baskets[n];
-                if (node.getNext() == null) {
-                    putNode(node.getKey(), node.getValue(), resizeBaskets);
-                } else {
-                    while (node.getNext() != null) {
-                        putNode(node.getKey(), node.getValue(), resizeBaskets);
-                        node = node.getNext();
-                    }
-                }
-            }
-        }
-        baskets = resizeBaskets;
-    }
-
-    public V get(K key) {
-        Node<K, V> node = baskets[(baskets.length - 1) & hash(key)];
-        if (node.getKey().equals(key)) {
-            return node.getValue();
-        } else {
-            while (node.getNext() != null) {
-                node = node.getNext();
-                if (node.getKey().equals(key)) {
-                    return node.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    private final int hash(K key) {
-        return (key == null) ? 0 : (key.hashCode() ^ (key.hashCode() >>> 16));
-    }
-
 
     private static class Node<K, V> {
 
@@ -124,7 +177,6 @@ public class OwnHashMap<K, V> {
         private void setValue(V value) {
             this.value = value;
         }
-
 
     }
 }
