@@ -19,14 +19,13 @@ public class OwnHashMap<K, V> {
     }
 
     private void putNode(K key, V value, Node<K, V>[] basket) {
-        int i;
-        Node<K, V> node = new Node<K, V>(key, value, hash(key), null);
-        if (basket[i = ((basket.length - 1) & hash(key))] == null) {
-            System.out.println(i);
+        int i = (basket.length - 1) & hash(key);
+        Node<K, V> node = new Node<>(key, value, hash(key), null);
+        if (basket[i] == null) {
             basket[i] = node;
             loaded += (float) 1 / (basket.length - 1);
         } else {
-            if (hash(key) == basket[i].getHash()) {
+            if (key.equals(basket[i].getKey())) {
                 basket[i].setValue(value);
             } else {
                 Node<K, V> basketNode = basket[i];
@@ -64,8 +63,7 @@ public class OwnHashMap<K, V> {
     }
 
     public V get(K key) {
-        int i;
-        Node<K, V> node = baskets[i = ((baskets.length - 1) & hash(key))];
+        Node<K, V> node = baskets[(baskets.length - 1) & hash(key)];
         if (node.getKey().equals(key)) {
             return node.getValue();
         } else {
@@ -83,8 +81,8 @@ public class OwnHashMap<K, V> {
         return size;
     }
 
-    final int hash(K key) {
-        return (key == null) ? 0 : (key.hashCode() ^ key.hashCode() >>> 16);
+    private final int hash(K key) {
+        return (key == null) ? 0 : (key.hashCode() ^ (key.hashCode() >>> 16));
     }
 
 
@@ -102,28 +100,28 @@ public class OwnHashMap<K, V> {
             this.hash = hash;
         }
 
-        public int getHash() {
+        private int getHash() {
             return this.hash;
         }
 
-        public Node<K, V> getNext() {
+        private Node<K, V> getNext() {
 
             return next;
         }
 
-        public void setNext(Node<K, V> next) {
+        private void setNext(Node<K, V> next) {
             this.next = next;
         }
 
-        public K getKey() {
+        private K getKey() {
             return key;
         }
 
-        public V getValue() {
+        private V getValue() {
             return value;
         }
 
-        public void setValue(V value) {
+        private void setValue(V value) {
             this.value = value;
         }
 
