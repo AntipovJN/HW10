@@ -18,12 +18,9 @@ public class App {
         for (int i = 0; i < customHashMap.getSize(); i++) {
             System.out.println(customHashMap.get(i));
         }
+
         System.out.println(customHashMap.containsKey(1));
         System.out.println(customHashMap.containsKey(2));
-       // customHashMap.clear();
-        System.out.println("get by key = 0 : " + customHashMap.get(0) + ". Is empty ?  - " + customHashMap.isEmpty());
-        customHashMap.put(0, "new value");
-        System.out.println("get by key = 0 : " + customHashMap.get(0) + ". Is empty ?  - " + customHashMap.isEmpty());
         HashMap<Integer, String> hashMap = new HashMap<>();
         OwnHashMap<Integer,String> testCustomMap = new OwnHashMap<>();
         testCustomMap.put(1,"123");
@@ -32,6 +29,10 @@ public class App {
             System.out.println(testCustomMap.get(i));
         }
         SortedSet<String> sortedValuesSet = new TreeSet<>(testCustomMap.values());
-        System.out.println("\n\n" + sortedValuesSet);
+        System.out.println("\n\n" + sortedValuesSet + "\n\n");
+        customHashMap.clear();
+        System.out.println("get by key = 0 : " + customHashMap.get(0) + ". Is empty ?  - " + customHashMap.isEmpty());
+        customHashMap.put(0, "new value");
+        System.out.println("get by key = 0 : " + customHashMap.get(0) + ". Is empty ?  - " + customHashMap.isEmpty());
     }
 }
